@@ -19,13 +19,8 @@ public class Solver {
         int sumOfErrors = 100;
 
         while(sumOfErrors != 0) {
-            series.printSeries();
-            sumOfErrors = 0;
-            series.calculateErrors();
-            for (int i = 0; i < errorit.length; i++) { // i = 0-5
-                //int sum1 = errors[i][errors[i].length];
-                sumOfErrors += errorit[i][4];
-            }
+            //series.printSeries();
+
             int[] gameToMove = pickRandomGame(); // Valitaan peli
             // Tarvitaan kopio sarjaohjelmasta
             try {
@@ -62,7 +57,15 @@ public class Solver {
                     break;
                 }
             }
+            sumOfErrors = 0;
+            series.calculateErrors();
+            errorit = series.constraints.get(0).getErrors();
+            for (int i = 0; i < errorit.length; i++) {
+                sumOfErrors += errorit[i][errorit[i].length-1];
+            }
         }
+        series.printSeries();
+
     }
 
     private int[] pickRandomGameFromSpecificRound(int destination) {

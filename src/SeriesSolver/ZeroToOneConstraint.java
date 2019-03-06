@@ -10,7 +10,7 @@ public class ZeroToOneConstraint implements IConstraint, Cloneable{
 
     public void initializeConstraint(int rounds, int teams) {
         // +1 koska viimeinen solu on kierroksen summa
-        this.teamErrors = new int[rounds][teams+1]; // TODO teams+1 is not correct
+        this.teamErrors = new int[rounds][13]; // TODO teams+1 is not correct
         gameErrors = new ArrayList<>();
         for (int i = 0; i < rounds; i++) {
             gameErrors.add(new ArrayList<>());

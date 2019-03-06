@@ -8,7 +8,7 @@ public class Main {
 	// write your code here
         ArrayList<IConstraint> rajoitukset = new ArrayList<>();
         rajoitukset.add(new ZeroToOneConstraint());
-        Series sr = new Series(4,2, rajoitukset);
+        Series sr = new Series(12,2, rajoitukset);
         sr.printSeries();
         Solver solver = new Solver(sr);
 //        solver.constraints.get(0).calculateErrors(solver.series);
