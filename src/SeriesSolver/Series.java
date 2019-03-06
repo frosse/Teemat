@@ -1,0 +1,137 @@
+package SeriesSolver;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+public class Series implements Cloneable {
+    private Random rnd = new Random();
+    private int teams;
+    private int amount; //keskinäiset kohtaamiset
+    private int rounds;
+
+    ArrayList<Game> gameList;
+    ArrayList<ArrayList<Game>> series;
+    ArrayList<IConstraint> constraints;
+
+    public Series(int teams, int amount, ArrayList<IConstraint> constraintList) {
+
+        this.teams = teams;
+        this.amount = amount;
+
+        if(teams % 2 == 0) {
+            rounds = (teams -1) * amount;
+        }else{
+            rounds = teams * amount;
+        }
+        this.constraints = constraintList;
+        setupConstraints();
+        makeSeries(rounds);
+        makeGameList();
+        addGamesToSeries();
+    }
+
+    private void setupConstraints() {
+        for (IConstraint constraint : constraints) {
+            constraint.initializeConstraint(rounds,teams);
+        }
+    }
+
+    public void calculateErrors() {
+        for (IConstraint constraint : constraints) {
+            constraint.calculateErrors(this);
+        }
+    }
+
+    public void printErrors() {
+        for (IConstraint constraint : constraints) {
+            constraint.printErrors();
+        }
+    }
+
+    //Teema 3:ssa käytetään tätä konstruktoria
+    public Series(int teams, int amount, int rounds, ArrayList<IConstraint> constraintList) {
+        this.teams = teams;
+        this.amount = amount;
+        this.rounds = rounds;
+        this.constraints = constraintList;
+
+        makeSeries(rounds);
+        makeGameList();
+        addGamesToSeries();
+    }
+    //Alustetaan otteluohjelma ja lisätään oikea määrä tyhjiä listoja eli kierroksia.
+    private void makeSeries(int rounds) {
+        series = new ArrayList<>();
+        for(int i = 0; i < rounds; i++) {
+            series.add(new ArrayList<>());
+        }
+    }
+    //Lisätään pelilistalta kaikki pelit randomilla otteluohjelmaan.
+    // Ainoa esto tässä, että kierroksia on rajoittettu määrä eli series.size()
+    private void addGamesToSeries() {
+        for (Game g : gameList) {
+            series.get(rnd.nextInt(series.size())).add(g);
+        }
+    }
+    // Tehdään lista jossa kaikki pelit tarvittavat pelit ovat
+    private void makeGameList() {
+        gameList = new ArrayList<>();
+
+        for (int h = 0; h < amount; h++) {
+            for (int i = 1; i < teams+1; i++) {
+                for (int j = i+1; j < teams+1; j++) {
+                    gameList.add( h%2== 0 ?new Game(i, j) : new Game(j,i));
+                }
+            }
+        }
+        // TODO: Teema3:ssa täällä lisätään "ylimääräiset" pelit
+    }
+
+    public void printGameList() {
+        for (Game g : gameList) {
+                System.out.println(g.home + " - " + g.away);
+        }
+    }
+
+    // Tulostaa sarjataulukon konsoliin.
+    public void printSeries() {
+        for (int i = 0; i < series.size(); i++) {
+            System.out.printf("Round %d: ", i+1);
+            for (int j = 0; j < series.get(i).size(); j++) {
+                    System.out.print(series.get(i).get(j));
+                if(j+1 != series.get(i).size()) {
+                    System.out.print(", ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    public int getTeams() {
+        return teams;
+    }
+
+    public int getRounds() {
+        return rounds;
+    }
+    public Object clone() throws CloneNotSupportedException {
+        Series clone = (Series)super.clone();
+        clone.series = new ArrayList<>();
+        try {
+            for (int i = 0; i < series.size(); i++) {
+                clone.series.add(new ArrayList<>());
+                for (int j = 0; j < series.get(i).size(); j++) {
+                    clone.series.get(i).add((Game)series.get(i).get(j).clone());
+                }
+            }
+            //TODO Constraints have to clone also.
+            clone.constraints = new ArrayList<>();
+            for (IConstraint c : this.constraints) {
+                clone.constraints.add((IConstraint)c.clone());
+            }
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return clone;
+    }
+}
