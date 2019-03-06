@@ -15,25 +15,68 @@ public class Solver {
     public void solve() {
         // TODO lasketaan virheet ensin
         series.calculateErrors();
+        int[][] errorit = series.constraints.get(0).getErrors();
+        int sumOfErrors = 100;
 
-        int[] gameToMove = pickRandomGame(); // Valitaan peli
-        // Tarvitaan kopio sarjaohjelmasta
-        try {
-            tempSeries = (Series)series.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
+        while(sumOfErrors != 0) {
+            series.printSeries();
+            sumOfErrors = 0;
+            series.calculateErrors();
+            for (int i = 0; i < errorit.length; i++) { // i = 0-5
+                //int sum1 = errors[i][errors[i].length];
+                sumOfErrors += errorit[i][4];
+            }
+            int[] gameToMove = pickRandomGame(); // Valitaan peli
+            // Tarvitaan kopio sarjaohjelmasta
+            try {
+                tempSeries = (Series) series.clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+            // Testattavassa listassa pidetään myös se kierros jolta valittu peli tuli, uskon että on helpompaa
+            // vain olla huomioimatta yhtä kierrosta kuin poistaa se ja valinnan jälkeen saada oikea indexi.
+            populateRoundsWithTestedGame(gameToMove[0], gameToMove[1]);
+
+            tempSeries.calculateErrors();
+            int destination = pickDestinationRound(gameToMove[0]);
+            moveGameToNewRound(destination, gameToMove);
+            //series.printSeries();
+            series.calculateErrors();
+            for (int j = 0; j < 5; j++) {
+                //tempSeries.printSeries();
+                //series.printErrors();
+                //tempSeries.printErrors();
+                if (series.series.get(destination).size() > 2) {
+                    gameToMove = pickRandomGameFromSpecificRound(destination);
+                    try {
+                        tempSeries = (Series) series.clone();
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                    }
+                    populateRoundsWithTestedGame(gameToMove[0], gameToMove[1]);
+                    destination = pickDestinationRound(gameToMove[0]);
+                    moveGameToNewRound(destination, gameToMove);
+                    //series.printSeries();
+
+                } else {
+                    break;
+                }
+            }
         }
-        // Testattavassa listassa pidetään myös se kierros jolta valittu peli tuli, uskon että on helpompaa
-        // vain olla huomioimatta yhtä kierrosta kuin poistaa se ja valinnan jälkeen saada oikea indexi.
-        populateRoundsWithTestedGame(gameToMove[0], gameToMove[1]);
+    }
 
-        int destination = pickDestinationRound(gameToMove[0]);
+    private int[] pickRandomGameFromSpecificRound(int destination) {
+        int[] gameIndex = new int[2];
+        gameIndex[0] = destination;
+        gameIndex[1] = rnd.nextInt(series.series.get(destination).size()-1); // -1 koska tiedetään, että listaan on lisätty juuri peli ja sitä ei saa ottaa
 
-        tempSeries.calculateErrors();
-        //tempSeries.printSeries();
-        series.printErrors();
-        tempSeries.printErrors();
-        System.out.println(series.series.get(gameToMove[0]).get(gameToMove[1]));
+        return gameIndex;
+    }
+
+    private void moveGameToNewRound(int destination, int[] gameToMove) {
+        Game temp = series.series.get(gameToMove[0]).get(gameToMove[1]);
+        series.series.get(gameToMove[0]).remove(gameToMove[1]);
+        series.series.get(destination).add(temp);
     }
 
     private int pickDestinationRound(int ignoredRound) {
@@ -73,21 +116,16 @@ public class Solver {
                 }
             }
         }
-
+        // Jos "parhaita" kierroksia enemmän kuin yksi niin valitaan randomilla
+        // TODO: Tällä hetkellä vain valitaan "paras" kierros, todellisuudessa pitää katsoa huononeeko kokonais virheet
+        // Ja jos huononee niin SA tulee kuvioihin
         int pickedRound;
         if(picked.size() > 1) {
             pickedRound = picked.get(rnd.nextInt(picked.size()));
         } else {
             pickedRound = picked.get(0);
         }
-        System.out.println("VALITTU KIERROS ON: " + pickedRound);
 
-
-
-        System.out.println("SUMMIEN EROTUKSET");
-        for (int i :erotukset) {
-            System.out.println(i);
-        }
         return pickedRound;
     }
 
