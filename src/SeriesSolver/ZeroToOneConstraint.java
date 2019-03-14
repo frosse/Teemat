@@ -5,12 +5,12 @@ import java.util.ArrayList;
 // käydään kaikki joukkueet läpi, jos joukkue on kierroksella useammin kuin kerran niin +1
 //
 public class ZeroToOneConstraint implements IConstraint, Cloneable{
-    int[][] teamErrors;
-    ArrayList<ArrayList<Integer>> gameErrors;
+    private int[][] teamErrors;
+    private ArrayList<ArrayList<Integer>> gameErrors;
 
     public void initializeConstraint(int rounds, int teams) {
         // +1 koska viimeinen solu on kierroksen summa
-        this.teamErrors = new int[rounds][13]; // TODO teams+1 is not correct
+        this.teamErrors = new int[rounds][teams+1]; // TODO teams+1 is not correct
         gameErrors = new ArrayList<>();
         for (int i = 0; i < rounds; i++) {
             gameErrors.add(new ArrayList<>());

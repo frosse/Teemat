@@ -1,18 +1,19 @@
-package SeriesSolver;//This class is copied from teachers example
+package SeriesSolver;
+//This class is copied from teachers example
 
 /*
 This is not coded as it should be coded. This is because you students also have to do something.
 */
 public class Tabulist {
     class Tabu {
-        int nmbr;
-        int place;
-        Tabu ( int n, int p ) {
-            nmbr = n;
-            place = p;
+        Game game;
+        int rnd;
+        Tabu ( Game game, int rnd ) {
+            this.game = game;
+            this.rnd = rnd;
         }
         public String toString() {
-            return "(" + nmbr + "," + place + ")";
+            return "(" + game + " rnd: " + rnd + ")";
         }
     }
 
@@ -23,8 +24,8 @@ public class Tabulist {
         currSize = 0;
     }
 
-    public void add ( int n, int p ) {
-        Tabu t = new Tabu ( n, p );
+    public void add ( Game g, int rnd ) {
+        Tabu t = new Tabu ( g, rnd );
         if ( currSize >= tl.length ) {
             shiftValues();
         }
@@ -32,10 +33,10 @@ public class Tabulist {
         tl[currSize-1] = t;
     }
 
-    public boolean isinList ( int n, int p ) {
+    public boolean isinList ( Game g, int rnd ) {
         for ( int i = 0; i < currSize; i++ ) {
             Tabu t = tl[i];
-            if (( t.nmbr == n ) && ( t.place == p ))
+            if (( t.game == g ) && ( t.rnd == rnd ))
                 return true;
         }
         return false;

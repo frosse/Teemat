@@ -1,5 +1,6 @@
 package SeriesSolver;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -9,7 +10,7 @@ public class Series implements Cloneable {
     private int amount; //keskinäiset kohtaamiset
     private int rounds;
 
-    ArrayList<Game> gameList;
+    private ArrayList<Game> gameList;
     ArrayList<ArrayList<Game>> series;
     ArrayList<IConstraint> constraints;
 
@@ -23,6 +24,7 @@ public class Series implements Cloneable {
         }else{
             rounds = teams * amount;
         }
+
         this.constraints = constraintList;
         setupConstraints();
         makeSeries(rounds);
@@ -46,6 +48,10 @@ public class Series implements Cloneable {
         for (IConstraint constraint : constraints) {
             constraint.printErrors();
         }
+    }
+
+    public Game getGameFromSeries(int i, int j) {
+        return series.get(i).get(j);
     }
 
     //Teema 3:ssa käytetään tätä konstruktoria
@@ -133,5 +139,35 @@ public class Series implements Cloneable {
             e.printStackTrace();
         }
         return clone;
+    }
+
+    public void output(int errors) {
+        try {
+            PrintWriter writer = new PrintWriter("output_teema2.txt", "UTF-8");
+            writer.println(errors +" "+ errors);
+            for (int i = 0; i < series.size(); i++) {
+                for (int j = 0; j < series.get(i).size(); j++) {
+                    writer.println((i + 1) + " " + series.get(i).get(j).printOutput() + " ei");
+                }
+            }
+            writer.close();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public int[][] getTeamsErrors() {
+        int[][] errors = new int[rounds][teams+1];
+        int[][] temp;
+        for (IConstraint c : constraints) {
+            temp = c.getErrors();
+            for (int i = 0; i < errors.length; i++) {
+                for (int j = 0; j < errors[i].length; j++) {
+                    errors[i][j] += temp[i][j];
+                }
+            }
+        }
+        return errors;
     }
 }

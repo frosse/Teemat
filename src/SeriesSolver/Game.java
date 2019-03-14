@@ -21,6 +21,9 @@ public class Game implements Cloneable {
         return super.clone();
     }
 
+    public String printOutput() {
+        return home + " " + away;
+    }
     @Override
     public String toString() {
         return home + " vs " + away;
