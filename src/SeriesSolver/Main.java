@@ -10,7 +10,7 @@ public class Main {
         // Lisätään rajoitukset listaan, tämä annetaan sarjaohjelmalle parametrina
         rajoitukset.add(new ZeroToOneConstraint());
 
-        Series sr = new Series(12,2, rajoitukset);
+        Series sr = new Series(rajoitukset);
         sr.printSeries();
         Solver solver = new Solver(sr,500);
 

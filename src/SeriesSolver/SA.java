@@ -30,6 +30,6 @@ public class SA {
         if ( called % markov == 0 ) {
             runningProb -= decrInProb;
         }
-        if ( runningProb < 0 ) runningProb = 0;
+        if ( runningProb < 0.015 ) runningProb = 0.015;
     }
 }
