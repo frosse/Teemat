@@ -123,7 +123,6 @@ public class Series implements Cloneable {
             while ( line != null ) {
                 home = Integer.parseInt(line.split(" ")[0]);
                 away = Integer.parseInt(line.split(" ")[1]);
-                System.out.println(home + " vs " + away);
                 series.get(rnd.nextInt(series.size())).add(new Game(home, away));
                 line = reader.readLine();
             }
@@ -197,11 +196,21 @@ public class Series implements Cloneable {
 
     public void output(int errors) {
         try {
-            PrintWriter writer = new PrintWriter("output_teema2.txt", "UTF-8");
+            PrintWriter writer = new PrintWriter("output_teema3.txt", "UTF-8");
             writer.println(errors +" "+ errors);
+            for (IConstraint c:this.constraints){
+               writer.print(c.getTotalErrorSum() + " ");
+            }
+            writer.println();
+            String print = "";
             for (int i = 0; i < series.size(); i++) {
                 for (int j = 0; j < series.get(i).size(); j++) {
-                    writer.println((i + 1) + " " + series.get(i).get(j).printOutput() + " ei");
+                    if( series.get( i ).get( j ).isMovable() ) {
+                        print = "ei";
+                    } else {
+                        print = "joo";
+                    }
+                    writer.println((i + 1) + " " + series.get(i).get(j).printOutput() +" "+print);
                 }
             }
             writer.close();
@@ -213,9 +222,17 @@ public class Series implements Cloneable {
 
     public int[][] getTeamsErrors() {
         int[][] errors = new int[rounds][teams+1];
+        for (int i = 0; i < errors.length; i++) {
+            for (int j = 0; j < errors[i].length; j++) {
+                errors[i][j] = 0;
+            }
+        }
         int[][] temp;
+
         for (IConstraint c : constraints) {
+
             temp = c.getErrors();
+
             for (int i = 0; i < errors.length; i++) {
                 for (int j = 0; j < errors[i].length; j++) {
                     errors[i][j] += temp[i][j];

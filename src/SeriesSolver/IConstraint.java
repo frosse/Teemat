@@ -5,5 +5,6 @@ public interface IConstraint {
      void printErrors();
      void initializeConstraint(int rounds, int teams);
      int[][] getErrors();
+     int getTotalErrorSum();
      Object clone() throws CloneNotSupportedException;
 }

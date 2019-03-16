@@ -9,7 +9,7 @@ public class Solver {
     private int debugInterval;
 
     private Random rnd = new Random();
-    private SA sa = new SA(100, 10);
+    private SA sa = new SA(10000, 100);
     private Tabulist tl = new Tabulist(5);
 
 
@@ -35,7 +35,11 @@ public class Solver {
                     for ( int[] error : tempErrors ) {
                         output += error[error.length - 1]+ " ";
                     }
-                System.out.println("Total errors: " + sumOfErrors + " Errors by round: "+ output+ " SA: "+Math.round( sa.acceptenceProb()*100)/100.0d);
+                    output += " | By constraint: ";
+                for (IConstraint c : series.constraints) {
+                    output += c.getTotalErrorSum() + " ";
+                }
+                System.out.println("Total errors: " + sumOfErrors + " | By round: "+ output+ " | SA: "+Math.round( sa.acceptenceProb()*1000)/1000.00d);
             }
 
             do {

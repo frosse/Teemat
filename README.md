@@ -10,8 +10,8 @@
 
 - [x] Lisää ylimääräiset pelit
 - [x] Ominaisuus jossa pelejä pystytään sitomaan paikalleen (boolean?)
-- [ ] Kotirajoite (HomeConstraint.java)
-- [ ] Vierasrajoite (AwayConstraint.java)
+- [x] Kotirajoite (HomeConstraint.java)
+- [x] Vierasrajoite (AwayConstraint.java)
 - [ ] Miten erottaa kovat ja pehmeät rajoitteet ?
 - [x] Lisää ennalta määrätyt pelit ja sido kierroksille
-- [ ] Output-tiedostoon virheiden tulostus oikein
+- [x] Output-tiedostoon virheiden tulostus oikein
