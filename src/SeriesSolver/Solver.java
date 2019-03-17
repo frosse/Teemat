@@ -35,7 +35,11 @@ public class Solver {
                     for ( int[] error : tempErrors ) {
                         output += error[error.length - 1]+ " ";
                     }
-                System.out.println("Total errors: " + sumOfErrors + " Errors by round: "+ output+ " SA: "+Math.round( sa.acceptenceProb()*100)/100.0d);
+                    output += " | By constraint: ";
+                for (IConstraint c : series.constraints) {
+                    output += c.getTotalErrorSum() + " ";
+                }
+                System.out.println("Total errors: " + sumOfErrors + " | By round: "+ output+ " | SA: "+Math.round( sa.acceptenceProb()*1000)/1000.00d);
             }
 
             do {
@@ -78,6 +82,9 @@ public class Solver {
 
                     //Valitaan peli jota siirretään
                     gameToMove = pickRandomGameFromSpecificRound( destination );
+                    if(gameToMove[0] == -1 && gameToMove[1] == -1) {
+                        break;
+                    }
 
                     //Kopioidaan väliaikaiseen sarjaohjelmaan alkuperäinen
                     copySeriesToTemp();
@@ -163,8 +170,19 @@ public class Solver {
 
     private int[] pickRandomGameFromSpecificRound( int destination ) {
         int[] gameIndex = new int[2];
+        int counter = 0;
         gameIndex[0] = destination;
-        gameIndex[1] = rnd.nextInt(series.series.get( destination ).size() - 1 ); // -1 koska tiedetään, että listaan on lisätty juuri peli ja sitä ei saa ottaa
+        gameIndex[1] = rnd.nextInt( series.series.get( destination ).size() - 1);
+        Game picked = series.getGameFromSeries( destination, gameIndex[1] );
+
+        while( !picked.isMovable ) {
+            if(counter == series.series.get(destination).size()) {
+                return new int[] {-1, -1};
+            }
+            gameIndex[1] = rnd.nextInt( series.series.get( destination ).size() - 1);
+            picked = series.getGameFromSeries( destination, gameIndex[1] );
+            counter++;
+        }
 
         return gameIndex;
     }
@@ -266,11 +284,26 @@ public class Solver {
     }
 
     private int[] pickRandomGame() {
-        int round = rnd.nextInt( series.series.size() );
-        while( series.series.get( round ).size() == 0 ) { // Tyhjältä kierrokselta ei voida ottaa peliä, joten arvotaan toinen kierros
-            round = rnd.nextInt( series.series.size() );
+        int round = rnd.nextInt(series.series.size());
+        int game = -1;
+        int counter = 0;
+        boolean flag = false;
+        while (true) {
+            counter = 0;
+            while (series.series.get(round).size() == 0 || flag) { // Tyhjältä kierrokselta ei voida ottaa peliä, joten arvotaan toinen kierros
+                round = rnd.nextInt(series.series.size());
+                flag = false;
+            }
+
+            while (series.series.get(round).size() >= counter) {
+                game = rnd.nextInt(series.series.get(round).size());
+                Game picked = series.getGameFromSeries(round, game);
+                if (picked.isMovable()) {
+                    return new int[]{round, game};
+                }
+                counter++;
+            }
+            flag = true;
         }
-        int game = rnd.nextInt( series.series.get( round ).size() );
-        return new int[] { round, game };
     }
 }

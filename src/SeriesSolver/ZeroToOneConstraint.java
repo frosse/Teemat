@@ -65,6 +65,7 @@ public class ZeroToOneConstraint implements IConstraint, Cloneable{
     }
 
     public void printErrors() {
+        System.out.println("0-1 Constraint");
         System.out.println("Errors per team: ");
         for (int i = 0; i < teamErrors.length; i++) {
             for (int j = 0; j < teamErrors[i].length; j++) {
@@ -80,6 +81,16 @@ public class ZeroToOneConstraint implements IConstraint, Cloneable{
             System.out.println();
         }
     }
+
+    @Override
+    public int getTotalErrorSum() {
+        int sumOfErrors = 0;
+        for ( int[] error : teamErrors ) {
+            sumOfErrors += error[error.length - 1];
+        }
+        return sumOfErrors;
+    }
+
     public Object clone() throws CloneNotSupportedException {
         ZeroToOneConstraint clone = (ZeroToOneConstraint)super.clone();
         int[][] newArray = new int[teamErrors.length][teamErrors[0].length];
