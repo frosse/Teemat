@@ -13,6 +13,7 @@ public class HomeConstraint implements IConstraint, Cloneable{
     private HashMap<Integer, ArrayList<Integer>> cantPlay;
     private int rounds;
     private int teams;
+
     @Override
     public void calculateErrors(Series series) {
         calculateTeamErrors(series);

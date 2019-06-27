@@ -22,6 +22,7 @@ public class Main {
         rajoitukset.add(new ZeroToOneConstraint());
         rajoitukset.add(new HomeConstraint());
         rajoitukset.add(new AwayConstraint());
+        //rajoitukset.add(new BreaksConstraint());
 
         Series sr = new Series(rajoitukset);
         sr.printSeries();
